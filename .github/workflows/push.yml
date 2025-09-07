@@ -10,9 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -22,5 +20,8 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Start project
-        run: npm start
+      - name: Start project and check
+        run: |
+          nohup npm start > server.log 2>&1 &
+          sleep 5
+          curl -f http://localhost:3000 || (tail -n 50 server.log && exit 1)
